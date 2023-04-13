@@ -252,7 +252,7 @@ def display_template():
 def panel_app():
     return template #"# This Panel app runs alongside flask, access the flask app at [here](./flask/app)"
 
-pn.serve({'panel': panel_app}, port=5006)
+pn.serve({'panel': panel_app}, port=8000)
 
 if __name__ == '__main__':
-    flask_app.run(debug=True, port=8000)
+    flask_app.run(host='0.0.0.0', port=8000, debug=True)
