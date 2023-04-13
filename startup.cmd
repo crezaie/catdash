@@ -1,1 +1,1 @@
-python -m panel serve app.py --address 0.0.0.0 --port 80 --allow-websocket-origin=None
+python -m panel serve app.py --port 80 --allow-websocket-origin=camwusa.azurewebsites.net
