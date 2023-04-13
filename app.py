@@ -233,10 +233,8 @@ template = pn.template.FastListTemplate(
     background_color ="#f2f2f2",#"#333e50",
     favicon = "https://wieseusa.com/img/logo-Wiese2.png",
     theme_toggle = False
-).servable()
+)
 
-
-# template.servable()
 
 
 from flask import (Flask, redirect, render_template, request,
@@ -252,7 +250,7 @@ def display_template():
 def panel_app():
     return template #"# This Panel app runs alongside flask, access the flask app at [here](./flask/app)"
 
-pn.serve({'panel': panel_app}, port=8000)
+pn.serve({'panel': panel_app}, port=80)
 
 if __name__ == '__main__':
-    flask_app.run(host='0.0.0.0', port=8000, debug=True)
+    flask_app.run(host='0.0.0.0', port=80, debug=True)
