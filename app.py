@@ -235,22 +235,22 @@ template = pn.template.FastListTemplate(
     theme_toggle = False
 )
 
+pn.panel(template).servable(title='test')
+
+# from flask import (Flask, redirect, render_template, request,
+#                    send_from_directory, url_for)
+
+# flask_app = Flask(__name__)
 
 
-from flask import (Flask, redirect, render_template, request,
-                   send_from_directory, url_for)
+# @flask_app.route('/')
+# def display_template():
+#     return 'Hello!'
 
-flask_app = Flask(__name__)
+# def panel_app():
+#     return template #"# This Panel app runs alongside flask, access the flask app at [here](./flask/app)"
 
+# pn.serve({'panel': panel_app}, port=80)
 
-@flask_app.route('/')
-def display_template():
-    return 'Hello!'
-
-def panel_app():
-    return template #"# This Panel app runs alongside flask, access the flask app at [here](./flask/app)"
-
-pn.serve({'panel': panel_app}, port=80)
-
-if __name__ == '__main__':
-    flask_app.run(host='0.0.0.0', port=80, debug=True)
+# if __name__ == '__main__':
+#     flask_app.run(host='0.0.0.0', port=80, debug=True)
