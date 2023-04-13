@@ -1,5 +1,5 @@
 import panel as pn
-pn.extension('tabulator','deckgl', 'echarts', 'plotly', 'vega', sizing_mode="stretch_width")
+pn.extension('tabulator', sizing_mode="stretch_width")
 import hvplot.pandas
 import pandas as pd
 import holoviews as hv
@@ -225,12 +225,12 @@ template = pn.template.FastListTemplate(
     sidebar=[Month,line_break,line_break,yaxis,font_pane,Branches],
     main=[main],
     accent_base_color="#FFD600",
-    header_background="#FFFFFF",#"#FFD600",
-    main_max_width='2000px',
-    sidebar_width=500,
+    header_background="#FFFFFF",
+    main_max_width='100%',
+    sidebar_width=300,
     logo='https://s7d2.scene7.com/is/image/Caterpillar/CM20220222-5c3c2-280a8?fmt=png-alpha',
-    header_color="#FFFFFF",#"#FFD600",
-    background_color ="#f2f2f2",#"#333e50",
+    header_color="#FFFFFF",
+    background_color ="#f2f2f2",
     favicon = "https://wieseusa.com/img/logo-Wiese2.png",
     theme_toggle = False
 )
