@@ -22,13 +22,12 @@ df = pd.read_csv('https://raw.githubusercontent.com/crezaie/catdash/main/data/sa
 #df = pd.read_csv('C:/Users/crezaie/Desktop/WieseScoreCard/CAT.csv')
 full = df.reset_index(drop=True)
 
-if "FirstContact" in df.columns:
-    df["FirstContact"] = pd.to_datetime(df["FirstContact"])
-    df["ResponseTime"] = pd.to_datetime(df["ResponseTime"])
-    df["LastWorkTime"] = pd.to_datetime(df["LastWorkTime"])
-    df["ArrivalTime"] = pd.to_datetime(df["ArrivalTime"])
-    df["ProposalTime"] = pd.to_datetime(df["ProposalTime"])
-    df["InvoiceTime"] = pd.to_datetime(df["InvoiceTime"])
+df["FirstContact"] = pd.to_datetime(df["FirstContact"], format="%m/%d/%y %H:%M")
+df["ResponseTime"] = pd.to_datetime(df["ResponseTime"], format="%m/%d/%y %H:%M")
+df["LastWorkTime"] = pd.to_datetime(df["LastWorkTime"], format="%m/%d/%y %H:%M")
+df["ArrivalTime"] = pd.to_datetime(df["ArrivalTime"], format="%m/%d/%y %H:%M")
+df["ProposalTime"] = pd.to_datetime(df["ProposalTime"], format="%m/%d/%y %H:%M")
+df["InvoiceTime"] = pd.to_datetime(df["InvoiceTime"], format="%m/%d/%y %H:%M")
 
 
 result_dict = {'Response': [1, 25],
