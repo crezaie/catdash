@@ -409,4 +409,4 @@ template = pn.template.FastListTemplate(
     theme_toggle = False
 )
 
-template.show()
+pn.panel(template).servable(title='test')
