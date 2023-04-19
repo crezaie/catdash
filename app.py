@@ -284,9 +284,7 @@ ihvplot = iresponse.hvplot.bar(
         use_index=True,
         ylim=(0,3),
         dynamic=True,
-    ).opts(xlabel="",ylabel="Hours to Respond",active_tools=['box_select', 'lasso_select'])
-
-
+    ).opts(xlabel="",ylabel="Hours to Respond",active_tools=['box_zoom'])
 
 ihvplot2 = icomplete.hvplot.bar(
         x='Location_c', 
@@ -300,7 +298,7 @@ ihvplot2 = icomplete.hvplot.bar(
         use_index=True,
         ylim=(0,20),
         dynamic=True
-    ).opts(xlabel="",ylabel="Hours to Complete",active_tools=['box_select', 'lasso_select'])
+    ).opts(xlabel="",ylabel="Hours to Complete",active_tools=['box_zoom'])
 
 ihvplot3 = iinvoice.hvplot.bar(
         x='Location_i', 
@@ -314,7 +312,7 @@ ihvplot3 = iinvoice.hvplot.bar(
         use_index=True,
         ylim=(0,25),
         dynamic=True
-    ).opts(xlabel="",ylabel="Days to Invoice",active_tools=['box_select', 'lasso_select'])
+    ).opts(xlabel="",ylabel="Days to Invoice",active_tools=['box_zoom'])
 
 ihvplot4 = ipm.hvplot.bar(
         x='Location_p',  
@@ -328,7 +326,7 @@ ihvplot4 = ipm.hvplot.bar(
         use_index=True,
         ylim=(0,11),
         dynamic=True,
-    ).opts(xlabel="",ylabel="PM Completion",active_tools=['box_select', 'lasso_select'])
+    ).opts(xlabel="",ylabel="PM Completion",active_tools=['box_zoom'])
 
 
 ihvplot5 = ioverall.hvplot.bar(
@@ -343,7 +341,7 @@ ihvplot5 = ioverall.hvplot.bar(
         use_index=True,
         ylim=(0,110),
         dynamic=True,
-    ).opts(xlabel="",ylabel="Overall Performance",active_tools=['box_select', 'lasso_select'])
+    ).opts(xlabel="",ylabel="Overall Performance",active_tools=['box_zoom'])
 
 target_line = hv.HLine(responsetarget).opts(line_dash='dotted', color='red') #* hv.Text("",responsetarget+1,"Target")
 ihvplot = ihvplot * target_line
