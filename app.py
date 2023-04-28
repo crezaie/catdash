@@ -62,6 +62,7 @@ idf = result.interactive()
 
 # In[4]:
 
+
 morton_due = pmdf.loc[pmdf['location']=='Morton', 'due'].values[0]
 morton_complete = pmdf.loc[pmdf['location']=='Morton', 'complete'].values[0]
 morton_remaining = pmdf.loc[pmdf['location']=='Morton', 'remaining'].values[0]
@@ -83,7 +84,7 @@ Mossville_html = pn.pane.HTML(f'<head><meta charset="UTF-8"><title>Mossville Mon
 Peoria_html = pn.pane.HTML(f'<head><meta charset="UTF-8"><title>East Peoria Monthly PM Progress</title><style>table{{border-collapse:collapse;width:40%;margin: 0 auto;font-size:20px}}th,td{{text-align:center;font-weight:bold;font-size:48px}}th{{background-color:lightgray;height:60px}}tr:last-child th{{border-top:2px solid black}}tr:nth-child(2) td{{font-size:28px;font-weight:bold}}tr:last-child td{{font-size:24px}}tr:nth-child(3){{border:4px solid #FFD600}}td{{font-family:Helvetica}}tr:first-child th{{font-size:24px}}tr:last-child th,tr:last-child td{{font-size:18px}}</style></head><body><table><tr><td colspan="5"></td></tr><tr><td colspan="5" style="font-size: 28px; font-weight: bold;">East Peoria Monthly PM Progress</td></tr><tr><td style="background-color: #f2f2f2; height: 60px;">{peoria_due}</td><td style="background-color: #f2f2f2; height: 60px;">{peoria_complete}</td><td style="background-color: #f2f2f2; height: 60px;">{peoria_remaining}</td><td style="background-color: #f2f2f2; height: 60px;">{peoria_percent}</td></tr><tr><td style="font-weight: bold;">Due</td><td style="font-weight: bold;">Complete</td><td style="font-weight: bold;">Remain</td><td style="font-weight: bold;">%</td></tr></table></body>')
 
 
-# In[5]:
+# In[8]:
 
 
 # location_options = {
@@ -120,6 +121,22 @@ Branches.param.watch(update_location_options, 'value')
 
 widget_panel = pn.Column(Branches, location_widget)
 
+month_values = result['InvoiceMonth'].unique().tolist()
+month_dict = {month_name: i+1 for i, month_name in enumerate(calendar.month_name[1:])}
+sorted_months = sorted(month_values, key=lambda x: month_dict[x])
+
+Month = pn.widgets.Select(
+    name='Month', 
+    options=sorted_months,
+    value=sorted_months[-1], # sets default value to the highest available month
+)
+
+year_values = result['InvoiceYear'].unique().tolist()
+Year = pn.widgets.Select(
+    name='Year', 
+    options=year_values,
+    value=year_values[-1], # sets default value to the highest available year
+)
 
 
 # update_content = Morton_html
@@ -148,40 +165,34 @@ def get_location_html(location):
     
 pn.state.location_html = get_location_html
 
-@pn.depends(location_widget.param.value)
-def update_location_html(location):
+# @pn.depends(location_widget.param.value)
+# def update_location_html(location):
+#     location_html = pn.state.location_html(location)
+#     if location_html is None:
+#         return None
+#     else:
+#         return location_html
+    
+@pn.depends(location_widget.param.value, Month.param.value)
+def update_location_html(location, month):
+    if month != sorted_months[-1]:  # if the current month selection is not the highest available month
+        return None
     location_html = pn.state.location_html(location)
     if location_html is None:
         return None
     else:
         return location_html
-
 # Create a Pane for the updated HTML
 location_pane = pn.Row(update_location_html)
 
 
-# In[6]:
+# In[ ]:
 
 
-month_values = result['InvoiceMonth'].unique().tolist()
-month_dict = {month_name: i+1 for i, month_name in enumerate(calendar.month_name[1:])}
-sorted_months = sorted(month_values, key=lambda x: month_dict[x])
-
-Month = pn.widgets.Select(
-    name='Month', 
-    options=sorted_months,
-    value=sorted_months[-1], # sets default value to the highest available month
-)
-
-year_values = result['InvoiceYear'].unique().tolist()
-Year = pn.widgets.Select(
-    name='Year', 
-    options=year_values,
-    value=year_values[-1], # sets default value to the highest available year
-)
 
 
-# In[7]:
+
+# In[9]:
 
 
 # # idf[idf.Location=='NotMorton']['WorkOrder']
@@ -201,7 +212,7 @@ Year = pn.widgets.Select(
 # result_df
 
 
-# In[8]:
+# In[10]:
 
 
 iresponse = (
@@ -363,7 +374,7 @@ ioverall2 = (
 )
 
 
-# In[9]:
+# In[11]:
 
 
 # def row_color(row):
@@ -398,7 +409,7 @@ itable6 = ieresponse.pipe(pn.widgets.Tabulator, **tabulator_settings)
 
 
 
-# In[10]:
+# In[12]:
 
 
 # ["#88d8b0", "#b39cd0", "#ffa500", "#1e90ff", "#00CED1"]
@@ -553,7 +564,7 @@ main= pn.FlexBox(*[
 ], align_content='space-evenly', justify_content="space-evenly")
 
 
-# In[15]:
+# In[14]:
 
 
 template = pn.template.FastListTemplate(
