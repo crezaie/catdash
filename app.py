@@ -528,9 +528,7 @@ target_line4 = hv.HLine(overalltarget).opts(line_dash='dotted', color='red')
 ihvplot5 = ihvplot5 * target_line4
 main= pn.FlexBox(*[
     pn.Column(
-        location_pane,
-        line_break,
-        
+       
         pn.Row(
             pn.Card(pn.Column(top5,itable5.panel(),ihvplot5.panel(), ),collapsible=False,background='White',margin=(40,40,40,40),hide_header=True ),
         ),
@@ -560,6 +558,10 @@ main= pn.FlexBox(*[
         #     pn.Card(pn.Column(top4,itable4.panel(),ihvplot4.panel(), ),collapsible=False,background='White',margin=(40,40,40,40),hide_header=True ),
         #     #background='black'
         # ) 
+                
+        line_break,   
+        location_pane,
+         
     )       
 ], align_content='space-evenly', justify_content="space-evenly")
 
