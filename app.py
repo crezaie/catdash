@@ -27,8 +27,8 @@ PALETTE = ["#88d8b0", "#b39cd0", "#ffa500", "#1e90ff", "#00CED1"]
 
 # df = pd.read_csv('C:/Users/crezaie/Desktop/ExcelFile/CAT_data_randomized.csv')
 # df = pd.read_csv('C:/Users/crezaie/Desktop/ExcelFile/sample424.csv')
-df = pd.read_csv('https://raw.githubusercontent.com/crezaie/catdash/main/data/sample427.csv?token=GHSAT0AAAAAACAPMDT6B6EMSN5GZVIGJBQAZCQIUHQ')
-pmdf = pd.read_csv('https://raw.githubusercontent.com/crezaie/catdash/main/data/PM_Status.csv?token=GHSAT0AAAAAACAPMDT62EK5PYIMAJ7ZO3QGZCQIT4Q')
+df = pd.read_csv('https://raw.githubusercontent.com/crezaie/catdash/main/data/sample427.csv')
+pmdf = pd.read_csv('https://raw.githubusercontent.com/crezaie/catdash/main/data/PM_Status.csv')
 
 result = df.reset_index(drop=True)
 
