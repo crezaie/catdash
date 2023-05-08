@@ -27,7 +27,10 @@ PALETTE = ["#88d8b0", "#b39cd0", "#ffa500", "#1e90ff", "#00CED1"]
 
 # df = pd.read_csv('C:/Users/crezaie/Desktop/ExcelFile/CAT_data_randomized.csv')
 # df = pd.read_csv('C:/Users/crezaie/Desktop/ExcelFile/sample424.csv')
-df = pd.read_csv('https://raw.githubusercontent.com/crezaie/catdash/main/data/sample427.csv')
+# df = pd.read_csv('https://raw.githubusercontent.com/crezaie/pleasework/main/data/sample427.csv')
+
+
+df = pd.read_csv('https://raw.githubusercontent.com/crezaie/catdash/main/data/sample51.csv')
 pmdf = pd.read_csv('https://raw.githubusercontent.com/crezaie/catdash/main/data/PM_Status.csv')
 
 result = df.reset_index(drop=True)
@@ -43,11 +46,15 @@ score_dict = {'Response': [30,20,10],
 score_total = sum([score_dict[key][0] for key in score_dict])
 
 
+df['Equipment'] = 'All'
+union_df = pd.concat([df, result], ignore_index=True)
+union_df = union_df.sort_values(by=['Branch', 'InvoiceMonth', 'InvoiceYear','Equipment']).reset_index(drop=True)
+
+
 # In[2]:
 
 
-result['Total_Work_Orders'] = 1
-result['Critical'] = result['Critical'].fillna(0).astype(int).map({0: 'Non-Emergency', 1: 'Emergency'})
+# result['Critical'] = result['Critical'].fillna(0).astype(int).map({0: 'Non-Emergency', 1: 'Emergency'})
 
 result = result.sort_values(by=['Branch', 'InvoiceMonth', 'InvoiceYear']).reset_index(drop=True)
 
@@ -57,10 +64,25 @@ result = result.sort_values(by=['Branch', 'InvoiceMonth', 'InvoiceYear']).reset_
 # In[3]:
 
 
-idf = result.interactive()
+idf = union_df.interactive()
 
 
 # In[4]:
+
+
+# import panel as pn
+
+# style = '<style>table{border-collapse:collapse;width:40%;margin: 0 auto;font-size:20px}th,td{text-align:center;font-weight:bold;font-size:48px}th{background-color:lightgray;height:60px}tr:last-child th{border-top:2px solid black}tr:nth-child(2) td{font-size:28px;font-weight:bold}tr:last-child td{font-size:24px}tr:nth-child(3){border:4px solid #FFD600}td{font-family:Helvetica}tr:first-child th{font-size:24px}tr:last-child th,tr:last-child td{font-size:18px}</style>'
+
+# html = f'<head><meta charset="UTF-8"><title>Morton Monthly PM Progress</title>{style}</head><body><table><tr><td colspan="5"></td></tr><tr><td colspan="5" style="font-size: 28px; font-weight: bold;">Morton Monthly PM Progress</td></tr><tr><td style="background-color: #f2f2f2; height: 60px;">{morton_due}</td><td style="background-color: #f2f2f2; height: 60px;">{morton_complete}</td><td style="background-color: #f2f2f2; height: 60px;">{morton_remaining}</td><td style="background-color: #f2f2f2; height: 60px;">{morton_percent}</td></tr><tr><td style="font-weight: bold;">Due</td><td style="font-weight: bold;">Complete</td><td style="font-weight: bold;">Remain</td><td style="font-weight: bold;">%</td></tr></table></body>'
+
+# html_pane = pn.pane.HTML(html)
+
+# flex_box = pn.FlexBox(html_pane, sizing_mode='stretch_width')
+
+# flex_box
+
+
 
 
 morton_due = pmdf.loc[pmdf['location']=='Morton', 'due'].values[0]
@@ -84,7 +106,7 @@ Mossville_html = pn.pane.HTML(f'<head><meta charset="UTF-8"><title>Mossville Mon
 Peoria_html = pn.pane.HTML(f'<head><meta charset="UTF-8"><title>East Peoria Monthly PM Progress</title><style>table{{border-collapse:collapse;width:40%;margin: 0 auto;font-size:20px}}th,td{{text-align:center;font-weight:bold;font-size:48px}}th{{background-color:lightgray;height:60px}}tr:last-child th{{border-top:2px solid black}}tr:nth-child(2) td{{font-size:28px;font-weight:bold}}tr:last-child td{{font-size:24px}}tr:nth-child(3){{border:4px solid #FFD600}}td{{font-family:Helvetica}}tr:first-child th{{font-size:24px}}tr:last-child th,tr:last-child td{{font-size:18px}}</style></head><body><table><tr><td colspan="5"></td></tr><tr><td colspan="5" style="font-size: 28px; font-weight: bold;">East Peoria Monthly PM Progress</td></tr><tr><td style="background-color: #f2f2f2; height: 60px;">{peoria_due}</td><td style="background-color: #f2f2f2; height: 60px;">{peoria_complete}</td><td style="background-color: #f2f2f2; height: 60px;">{peoria_remaining}</td><td style="background-color: #f2f2f2; height: 60px;">{peoria_percent}</td></tr><tr><td style="font-weight: bold;">Due</td><td style="font-weight: bold;">Complete</td><td style="font-weight: bold;">Remain</td><td style="font-weight: bold;">%</td></tr></table></body>')
 
 
-# In[8]:
+# In[13]:
 
 
 # location_options = {
@@ -94,6 +116,14 @@ Peoria_html = pn.pane.HTML(f'<head><meta charset="UTF-8"><title>East Peoria Mont
 
 br = result['Branch'].unique()
 lc = result['Location'].unique()
+equ = union_df['Equipment'].unique().tolist()
+
+Equip = pn.widgets.Select(
+    name='Equipment', 
+    options=equ,
+    value='All',
+)
+
 location_options = {}
 for branch in br:
     location_options[branch] = [Location for Location in lc if result[(result['Branch'] == branch) & (result['Location'] == Location)].shape[0] > 0]
@@ -119,7 +149,7 @@ location_widget = pn.widgets.Select(
 
 Branches.param.watch(update_location_options, 'value')
 
-widget_panel = pn.Column(Branches, location_widget)
+widget_panel = pn.Column(Branches, location_widget, Equip)
 
 month_values = result['InvoiceMonth'].unique().tolist()
 month_dict = {month_name: i+1 for i, month_name in enumerate(calendar.month_name[1:])}
@@ -186,13 +216,44 @@ def update_location_html(location, month):
 location_pane = pn.Row(update_location_html)
 
 
+
+
+def get_equipment_options(branch, location, year, month):
+    options = union_df.loc[
+        (union_df['Branch'] == branch) & 
+        (union_df['Location'] == location) & 
+        (union_df['InvoiceYear'] == year) &
+        (union_df['InvoiceMonth'] == month), 
+        'Equipment'
+    ].unique().tolist()
+    if 'All' in options:
+        options.remove('All')
+    options.insert(0, 'All')
+    return options
+
+def update_options(event):
+    equip_options = get_equipment_options(
+        Branches.value, 
+        location_widget.value, 
+        Year.value, 
+        Month.value
+    )
+    Equip.options = equip_options
+    Equip.value = equip_options[0] # set default value
+
+Branches.param.watch(update_options, 'value')
+location_widget.param.watch(update_options, 'value')
+Year.param.watch(update_options, 'value')
+Month.param.watch(update_options, 'value')
+
+
 # In[ ]:
 
 
 
 
 
-# In[9]:
+# In[14]:
 
 
 # # idf[idf.Location=='NotMorton']['WorkOrder']
@@ -211,41 +272,41 @@ location_pane = pn.Row(update_location_html)
 # result_df = all_locs_df.merge(agg_df, on='Location', how='left').fillna({'Count': 0})
 # result_df
 
-
-# In[10]:
-
-
 iresponse = (
     idf[
         (idf.InvoiceMonth == Month) &
         (idf.Branch == Branches) &
         (idf.InvoiceYear == Year) &
         (idf.Location == location_widget) &
-        (~idf.ServiceType.str.contains('PM')) &
-        (idf['Critical'] == 'Non-Emergency')
+        # (~idf.ServiceType.str.contains('PM')) &
+        (idf.Equipment == Equip)
+        # (idf['Critical'] == 'Non-Emergency')
     ]
-    .groupby(['InvoiceYear','InvoiceMonth','Branch','Location','Critical'])  
-    .agg(Avg_Response_Time=('Response', 'mean'), Total_Work_Orders=('Total_Work_Orders','sum'))
+    .groupby(['InvoiceYear','InvoiceMonth','Branch','Location','Equipment'])  
+    .agg(Avg_Response_Time2=('Response_Ratio', 'sum'), Total_Work_Orders=('Total_Work_Orders','sum'))
+    .assign(Avg_Response_Time=lambda x: (x['Avg_Response_Time2'] / x['Total_Work_Orders']))
     .reset_index()
     .round({'Avg_Response_Time': 1})
     .reset_index(drop=True) 
+    .drop(columns=['Avg_Response_Time2'])
 )
 
-ieresponse = (
-    idf[
-        (idf.InvoiceMonth == Month) &
-        (idf.Branch == Branches) &
-        (idf.InvoiceYear == Year) &
-        (idf.Location == location_widget) &
-        (~idf.ServiceType.str.contains('PM')) &
-        (idf['Critical'] == 'Emergency')
-    ]
-    .groupby(['InvoiceYear','InvoiceMonth','Branch','Location','Critical'])  
-    .agg(Avg_Response_Time=('Response', 'mean'), Total_Work_Orders=('Total_Work_Orders','sum'))
-    .reset_index()
-    .round({'Avg_Response_Time': 1})
-    .reset_index(drop=True) 
-)
+# ieresponse = (
+#     idf[
+#         (idf.InvoiceMonth == Month) &
+#         (idf.Branch == Branches) &
+#         (idf.InvoiceYear == Year) &
+#         (idf.Location == location_widget) &
+#         (~idf.ServiceType.str.contains('PM')) &
+#         (idf.Equipment == Equip)
+#         # (idf['Critical'] == 'Emergency')
+#     ]
+#     .groupby(['InvoiceYear','InvoiceMonth','Branch','Location','Equipment'])  
+#     .agg(Avg_Response_Time=('Response', 'mean'), Total_Work_Orders=('Total_Work_Orders','sum'))
+#     .reset_index()
+#     .round({'Avg_Response_Time': 1})
+#     .reset_index(drop=True) 
+# )
 
 icomplete = (
     idf[
@@ -253,13 +314,16 @@ icomplete = (
         (idf.Branch == Branches) &
         (idf.InvoiceYear == Year) &
         (idf.Location == location_widget) &
-        (~idf.ServiceType.str.contains('PM'))
+        (idf.Equipment == Equip)
+        # (~idf.ServiceType.str.contains('PM'))
     ]
-    .groupby(['InvoiceYear','InvoiceMonth','Branch','Location'])
-    .agg(Avg_Complete_Time=('Time_to_Complete', 'mean'), Total_Work_Orders=('Total_Work_Orders','sum'))   
+    .groupby(['InvoiceYear','InvoiceMonth','Branch','Location','Equipment'])
+    .agg(Avg_Complete_Time2=('Complete_Ratio', 'sum'), Total_Work_Orders=('Total_Work_Orders','sum')) 
+    .assign(Avg_Complete_Time=lambda x: (x['Avg_Complete_Time2'] / x['Total_Work_Orders']))
     .reset_index()
     .round({'Avg_Complete_Time': 1})
     .reset_index(drop=True)   
+    .drop(columns=['Avg_Complete_Time2'])
 )
 
 iinvoice = (
@@ -268,13 +332,16 @@ iinvoice = (
         (idf.Branch == Branches) &
         (idf.InvoiceYear == Year) &
         (idf.Location == location_widget) &
-        (~idf.ServiceType.str.contains('PM'))
+        (idf.Equipment == Equip)
+        # (~idf.ServiceType.str.contains('PM'))
     ]
-    .groupby(['InvoiceYear','InvoiceMonth','Branch','Location'])
-    .agg(Avg_Invoice_Time=('Hours_to_Submit', 'mean'), Total_Work_Orders=('Total_Work_Orders','sum'))   
+    .groupby(['InvoiceYear','InvoiceMonth','Branch','Location','Equipment'])
+    .agg(Avg_Invoice_Time2=('Submit_Ratio', 'sum'), Total_Work_Orders=('Total_Work_Orders','sum'))   
+    .assign(Avg_Invoice_Time=lambda x: (x['Avg_Invoice_Time2'] / x['Total_Work_Orders']))
     .reset_index()
     .round({'Avg_Invoice_Time': 1})
     .reset_index(drop=True)    
+    .drop(columns=['Avg_Invoice_Time2'])
 )
 
 
@@ -283,98 +350,126 @@ ioverall = (
         (idf.InvoiceMonth == Month) &
         (idf.InvoiceYear == Year) &        
         (idf.Location == location_widget) &
-        (idf.Branch == Branches)
+        (idf.Branch == Branches) &
+        (idf.Equipment == Equip)
     ]
-    .groupby(['InvoiceYear','InvoiceMonth','Branch','Location','Critical'])
+    .groupby(['InvoiceYear','InvoiceMonth','Branch','Location','Equipment'])
     .agg(
-        Avg_Response_Time=('Response', 'mean'),
-        Avg_Complete_Time=('Time_to_Complete', 'mean'),
-        Avg_Invoice_Time=('Hours_to_Submit', 'mean'),
+        Avg_Response_Time2=('Response_Ratio', 'sum'),
+        Avg_Complete_Time2=('Complete_Ratio', 'sum'),
+        Avg_Invoice_Time2=('Submit_Ratio', 'sum'),
         Total_Work_Orders=('Total_Work_Orders','sum')
     )
     .reset_index()
+    .assign(Avg_Complete_Time=lambda x: (x['Avg_Complete_Time2'] / x['Total_Work_Orders']))
+    .assign(Avg_Invoice_Time=lambda x: (x['Avg_Invoice_Time2'] / x['Total_Work_Orders']))
+    .assign(Avg_Response_Time=lambda x: (x['Avg_Response_Time2'] / x['Total_Work_Orders']))
     .assign(Response_Score=lambda x: np.select(
             [
-                (x['Avg_Response_Time'] <= result_dict['Response'][0]/2) | 
-                ((x['Avg_Response_Time'] <= result_dict['Response'][0]) & (x['Critical'] == 'Non-Emergency')),
-                (x['Avg_Response_Time'] <= result_dict['Response'][1]/2) | 
-                ((x['Avg_Response_Time'] <= result_dict['Response'][1]) & (x['Critical'] == 'Non-Emergency')),
-                (x['Avg_Response_Time'] <= result_dict['Response'][2]/2) | 
-                ((x['Avg_Response_Time'] <= result_dict['Response'][2]) & (x['Critical'] == 'Non-Emergency'))
+                (x['Avg_Response_Time'] <= result_dict['Response'][0]),
+                (x['Avg_Response_Time'] <= result_dict['Response'][1]),
+                (x['Avg_Response_Time'] <= result_dict['Response'][2])
             ],
             [
-                score_dict['Response'][0]/2,
-                score_dict['Response'][1]/2,
-                score_dict['Response'][2]/2
+                score_dict['Response'][0],
+                score_dict['Response'][1],
+                score_dict['Response'][2]
             ],
-            default=0
-        )
-    )
-    
-    .assign(compAg=lambda x: x['Total_Work_Orders'] * x['Avg_Complete_Time'],
-            invAg=lambda x: x['Total_Work_Orders'] * x['Avg_Invoice_Time']) 
-    .round({'compAg': 4, 'invAg': 4})
-    .sort_values(by=['Branch', 'Location'])
-    .reset_index(drop=True) 
-    .assign(Counter=lambda x: x['Critical'].apply(lambda y: -2 if y == 'Emergency' else 2))
-)
-
-
-ioverall2 = (
-    ioverall[
-            (ioverall.InvoiceMonth == Month) &
-            (ioverall.InvoiceYear == Year) &        
-            (ioverall.Location == location_widget) &
-            (ioverall.Branch == Branches)
-    ]
-    .groupby(['InvoiceYear','InvoiceMonth','Branch','Location'])
-    .agg(
-        Response_Score2=('Response_Score', 'sum'),
-        compAg2=('compAg', 'sum'),
-        invAg2=('invAg', 'sum'),
-        Total_Work_Orders=('Total_Work_Orders','sum'),
-        Counter=('Counter','sum')
-    )
-    
-    .reset_index()
-    .assign(Counter=lambda x: x['Counter'].fillna(0).replace(0,1)) 
+            default=0))
+            
     .assign(Complete_Score=lambda x: np.select(
             [
-                (x['compAg2']/x['Total_Work_Orders'] <= result_dict['Time_to_Complete'][0]),
-                (x['compAg2']/x['Total_Work_Orders'] <= result_dict['Time_to_Complete'][1]), 
-                (x['compAg2']/x['Total_Work_Orders'] <= result_dict['Time_to_Complete'][2]) 
+                (x['Avg_Complete_Time'] <= result_dict['Time_to_Complete'][0]),
+                (x['Avg_Complete_Time'] <= result_dict['Time_to_Complete'][1]), 
+                (x['Avg_Complete_Time'] <= result_dict['Time_to_Complete'][2]) 
             ],
             [
                 score_dict['Time_to_Complete'][0],
                 score_dict['Time_to_Complete'][1],
                 score_dict['Time_to_Complete'][2]
             ],
-            default=0
-        )
-    )
- 
-    .assign(Invoice_Score=lambda x: np.select(
+            default=0))            
+
+     .assign(Invoice_Score=lambda x: np.select(
             [
-                (x['invAg2']/x['Total_Work_Orders'] <= result_dict['Hours_to_Submit'][0]),
-                (x['invAg2']/x['Total_Work_Orders'] <= result_dict['Hours_to_Submit'][1]), 
-                (x['invAg2']/x['Total_Work_Orders'] <= result_dict['Hours_to_Submit'][2]) 
+                (x['Avg_Invoice_Time'] <= result_dict['Hours_to_Submit'][0]),
+                (x['Avg_Invoice_Time'] <= result_dict['Hours_to_Submit'][1]), 
+                (x['Avg_Invoice_Time'] <= result_dict['Hours_to_Submit'][2]) 
             ],
             [
                 score_dict['Hours_to_Submit'][0],
                 score_dict['Hours_to_Submit'][1],
                 score_dict['Hours_to_Submit'][2]
             ],
-            default=0
-        )
-    )    
-    .assign(Response_Score2=lambda x: (x['Response_Score2'] * x['Counter']))
-    .assign(Compliance=lambda x: (x['Invoice_Score'] + x['Complete_Score'] + x['Response_Score2']))
-    .reset_index(drop=True)
-    .drop(columns=['compAg2','invAg2','Response_Score2','Invoice_Score','Complete_Score','Counter'])
+            default=0))
+    .assign(Compliance=lambda x: (x['Invoice_Score'] + x['Complete_Score'] + x['Response_Score']))
+    .sort_values(by=['Branch', 'Location'])
+    .reset_index(drop=True) 
+    .drop(columns=['Avg_Response_Time','Avg_Complete_Time','Avg_Invoice_Time','Invoice_Score','Complete_Score','Response_Score', 'Avg_Complete_Time2', 'Avg_Invoice_Time2', 'Avg_Response_Time2'])
+    # .assign(Counter=lambda x: x['Critical'].apply(lambda y: -2 if y == 'Emergency' else 2))
 )
 
 
-# In[11]:
+# ioverall2 = (
+#     ioverall[
+#             (ioverall.InvoiceMonth == Month) &
+#             (ioverall.InvoiceYear == Year) &        
+#             (ioverall.Location == location_widget) &
+#             (ioverall.Branch == Branches) &
+#             (ioverall.Equipment == Equip)
+#     ]
+#     .groupby(['InvoiceYear','InvoiceMonth','Branch','Location','Equipment'])
+#     .agg(
+#         Response_Score2=('Response_Score', 'sum'),
+#         compAg2=('compAg', 'sum'),
+#         invAg2=('invAg', 'sum'),
+#         Total_Work_Orders=('Total_Work_Orders','sum'),
+#         Counter=('Counter','sum')
+#     )
+    
+#     .reset_index()
+#     .assign(Counter=lambda x: x['Counter'].fillna(0).replace(0,1)) 
+#     .assign(Complete_Score=lambda x: np.select(
+#             [
+#                 (x['compAg2']/x['Total_Work_Orders'] <= result_dict['Time_to_Complete'][0]),
+#                 (x['compAg2']/x['Total_Work_Orders'] <= result_dict['Time_to_Complete'][1]), 
+#                 (x['compAg2']/x['Total_Work_Orders'] <= result_dict['Time_to_Complete'][2]) 
+#             ],
+#             [
+#                 score_dict['Time_to_Complete'][0],
+#                 score_dict['Time_to_Complete'][1],
+#                 score_dict['Time_to_Complete'][2]
+#             ],
+#             default=0
+#         )
+#     )
+ 
+#     .assign(Invoice_Score=lambda x: np.select(
+#             [
+#                 (x['invAg2']/x['Total_Work_Orders'] <= result_dict['Hours_to_Submit'][0]),
+#                 (x['invAg2']/x['Total_Work_Orders'] <= result_dict['Hours_to_Submit'][1]), 
+#                 (x['invAg2']/x['Total_Work_Orders'] <= result_dict['Hours_to_Submit'][2]) 
+#             ],
+#             [
+#                 score_dict['Hours_to_Submit'][0],
+#                 score_dict['Hours_to_Submit'][1],
+#                 score_dict['Hours_to_Submit'][2]
+#             ],
+#             default=0
+#         )
+#     )    
+#     .assign(Response_Score2=lambda x: (x['Response_Score2'] * x['Counter']))
+#     .assign(Compliance=lambda x: (x['Invoice_Score'] + x['Complete_Score'] + x['Response_Score2']))
+#     .reset_index(drop=True)
+#     .drop(columns=['compAg2','invAg2','Response_Score2','Invoice_Score','Complete_Score','Counter'])
+# )
+
+
+# ioverall2
+            
+
+
+# In[16]:
 
 
 # def row_color(row):
@@ -393,9 +488,9 @@ tabulator_settings = {
 }
 
 iresponse = iresponse.rename(columns={'Avg_Response_Time': 'Avg Hours to Respond', 'Total_Work_Orders': 'Total Work Orders'})
-ieresponse = ieresponse.rename(columns={'Location': 'Location ', 'Avg_Response_Time': 'Avg Hours to Respond', 'Total_Work_Orders': 'Total Work Orders'})
+# ieresponse = ieresponse.rename(columns={'Location': 'Location ', 'Avg_Response_Time': 'Avg Hours to Respond', 'Total_Work_Orders': 'Total Work Orders'})
 icomplete = icomplete.rename(columns={'Location': 'Location  ', 'Total_Work_Orders': 'Total Work Orders', 'Avg_Complete_Time': 'Avg Hours to Complete'})
-ioverall2 = ioverall2.rename(columns={'Location': 'Location   ', 'Total_Work_Orders': 'Total Work Orders', 'Compliance': 'Total Score out of 80'})
+ioverall2 = ioverall.rename(columns={'Location': 'Location   ', 'Total_Work_Orders': 'Total Work Orders', 'Compliance': 'Total Score out of 80'})
 # ipm = ipm.rename(columns={'Location': 'Location_p'})
 iinvoice = iinvoice.rename(columns={'Location': 'Location    ', 'Total_Work_Orders': 'Total Work Orders', 'Avg_Invoice_Time': 'Avg Hours to Invoice'})
 
@@ -405,16 +500,16 @@ itable3 = iinvoice.pipe(pn.widgets.Tabulator, **tabulator_settings)
 # itable4 = ipm.pipe(pn.widgets.Tabulator, **tabulator_settings)
 itable5 = ioverall2.pipe(pn.widgets.Tabulator, **tabulator_settings)
 
-itable6 = ieresponse.pipe(pn.widgets.Tabulator, **tabulator_settings)
+# itable6 = ieresponse.pipe(pn.widgets.Tabulator, **tabulator_settings)
 
 
 
-# In[12]:
+# In[17]:
 
 
 # ["#88d8b0", "#b39cd0", "#ffa500", "#1e90ff", "#00CED1"]
 
-top0 = pn.pane.HTML('<div style="text-align: center; font-size: 48px; font-weight: bold; color: black; background-color: #FFD600; border: 3px solid black; font-family: Helvetica, Arial, sans-serif;">Hours to Respond (Emergency)</div>')
+# top0 = pn.pane.HTML('<div style="text-align: center; font-size: 48px; font-weight: bold; color: black; background-color: #FFD600; border: 3px solid black; font-family: Helvetica, Arial, sans-serif;">Hours to Respond (Emergency)</div>')
 top1 = pn.pane.HTML('<div style="text-align: center; font-size: 48px; font-weight: bold; color: black; background-color: #FFD600; border: 3px solid black; font-family: Helvetica, Arial, sans-serif;">Hours to Respond</div>')
 top2 = pn.pane.HTML('<div style="text-align: center; font-size: 48px; font-weight: bold; color: black; background-color: #FFD600; border: 3px solid black; font-family: Helvetica, Arial, sans-serif;">Hours to Complete</div>')
 top3 = pn.pane.HTML('<div style="text-align: center; font-size: 48px; font-weight: bold; color: black; background-color: #FFD600; border: 3px solid black; font-family: Helvetica, Arial, sans-serif;">Hours to Invoice</div>')
@@ -427,7 +522,7 @@ bottom2 = pn.pane.HTML('<div style="text-align: center; font-size: 20px; font-we
 bottom3 = pn.pane.HTML('<div style="text-align: center; font-size: 20px; font-weight: bold; color: black; background-color: #D9D9D9; border: 3px solid black; font-family: Helvetica, Arial, sans-serif;">Hours between work order completion and invoice submittal</div>')
 
 
-# In[13]:
+# In[18]:
 
 
 line_break = pn.pane.HTML('<br>')
@@ -436,7 +531,7 @@ span = pn.pane.HTML("</span>")
 spacer = pn.layout.Spacer(width=20)
 
 responsetarget = result_dict['Response'][0]
-eresponsetarget = responsetarget/2
+# eresponsetarget = responsetarget/2
 completetarget = result_dict['Time_to_Complete'][0]
 invoicetarget = result_dict['Hours_to_Submit'][0]
 # pmtarget = result_dict['PM_Completion'][1]
@@ -446,7 +541,7 @@ ihvplot = iresponse.hvplot.bar(
         # x='Location_r',
         x='Location', 
         y='Avg Hours to Respond', 
-        # by='Critical',
+        # by='Equipment',
         color=PALETTE[4], 
         bar_width=.3, 
         line_width=3, 
@@ -456,24 +551,25 @@ ihvplot = iresponse.hvplot.bar(
         dynamic=True,
     ).opts(xlabel="",ylabel="Hours to Respond",active_tools=['box_zoom'])
 
-iehvplot = ieresponse.hvplot.bar(
-        # x='Location_er', 
-        x='Location ', 
-        y='Avg Hours to Respond', 
-        # by='Critical',
-        color=PALETTE[3], 
-        bar_width=.3, 
-        line_width=3, 
-        yformatter='%.2f', 
-        use_index=True,
-        ylim=(0,eresponsetarget+3),
-        dynamic=True,
-    ).opts(xlabel="",ylabel="Hours to Respond",active_tools=['box_zoom'])
+# iehvplot = ieresponse.hvplot.bar(
+#         # x='Location_er', 
+#         x='Location ', 
+#         y='Avg Hours to Respond', 
+#         by='Equipment',
+#         color=PALETTE[3], 
+#         bar_width=.3, 
+#         line_width=3, 
+#         yformatter='%.2f', 
+#         use_index=True,
+#         ylim=(0,eresponsetarget+3),
+#         dynamic=True,
+#     ).opts(xlabel="",ylabel="Hours to Respond",active_tools=['box_zoom'])
 
 ihvplot2 = icomplete.hvplot.bar(
         # x='Location_c', 
         x='Location  ',
         y='Avg Hours to Complete', 
+        # by='Equipment',
         color=PALETTE[1],
         bar_width=.3, 
         line_width=3, 
@@ -487,6 +583,7 @@ ihvplot3 = iinvoice.hvplot.bar(
         # x='Location_i', 
         x='Location    ',
         y='Avg Hours to Invoice', 
+        # by='Equipment',
         color=PALETTE[2], 
         bar_width=.3, 
         line_width=3, 
@@ -500,6 +597,7 @@ ihvplot5 = ioverall2.hvplot.bar(
         # x='Location_o',
         x='Location   ',
         y='Total Score out of 80', 
+        # by='Equipment',
         color=PALETTE[0], 
         bar_width=.3, 
         line_width=3, 
@@ -509,8 +607,8 @@ ihvplot5 = ioverall2.hvplot.bar(
         dynamic=True,
     ).opts(xlabel="",ylabel="Overall Performance",active_tools=['box_zoom'])
 
-target_line0 = hv.HLine(eresponsetarget).opts(line_dash='dotted', color='red') #* hv.Text("",responsetarget+1,"Target")
-iehvplot = iehvplot * target_line0
+# target_line0 = hv.HLine(eresponsetarget).opts(line_dash='dotted', color='red') #* hv.Text("",responsetarget+1,"Target")
+# iehvplot = iehvplot * target_line0
 
 target_line = hv.HLine(responsetarget).opts(line_dash='dotted', color='red') #* hv.Text("",responsetarget+1,"Target")
 ihvplot = ihvplot * target_line
@@ -557,16 +655,19 @@ main= pn.FlexBox(*[
         # pn.Row(
         #     pn.Card(pn.Column(top4,itable4.panel(),ihvplot4.panel(), ),collapsible=False,background='White',margin=(40,40,40,40),hide_header=True ),
         #     #background='black'
-        # ) 
-                
-        line_break,   
+        # )
+        
+        
+        line_break,
         location_pane,
-         
+        line_break,
+        line_break,
+        line_break,            
     )       
 ], align_content='space-evenly', justify_content="space-evenly")
 
 
-# In[14]:
+# In[19]:
 
 
 template = pn.template.FastListTemplate(
@@ -586,6 +687,10 @@ template = pn.template.FastListTemplate(
     favicon = "https://wieseusa.com/img/logo-Wiese2.png",
     theme_toggle = False
 )
+
+
+
+
 
 pn.panel(template).servable(title='test')
 
