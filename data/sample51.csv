@@ -1,0 +1,38 @@
+﻿InvoiceMonth,InvoiceYear,Location,Branch,Equipment,ServiceType,Total_Work_Orders,Response,Time_to_Complete,Hours_to_Submit,Response_Ratio,Complete_Ratio,Submit_Ratio
+April,2023,Morton,CAT Morton,Scrubber,Reactive,1,46.2,46.7,1.62,46.2,46.7,1.62
+April,2023,Morton,CAT Morton,Burden Carrier,Reactive,1,0,52.5,1.02,0,52.5,1.02
+April,2023,Morton,CAT Morton,Tow,Reactive,4,17.95,25.075,1.8925,71.8,100.3,7.57
+April,2023,Morton,CAT Morton,Sit Down Electric,Damage,12,2.798333,9.759166,5.895,33.579996,117.109992,70.74
+April,2023,Morton,CAT Morton,Stand Up Counterbalance,Damage,1,2,3,3.98,2,3,3.98
+April,2023,Morton,CAT Morton,Sit Down IC,Reactive,16,1.91375,18.528125,3.01625,30.62,296.45,48.26
+April,2023,Morton,CAT Morton,Vehicle,Reactive,3,27.466666,38.466666,2.57,82.399998,115.399998,7.71
+April,2023,Morton,CAT Morton,Reach Truck,Damage,6,3.17,17.253333,4.37,19.02,103.519998,26.22
+April,2023,Morton,CAT Morton,Scissor,Damage,1,97.3,99.3,2.4,97.3,99.3,2.4
+April,2023,Morton,CAT Morton,Sit Down Electric,Reactive,40,3.92025,13.15775,4.807,156.81,526.31,192.28
+April,2023,Morton,CAT Morton,Excavator,Damage,2,8.18,10.18,1.275,16.36,20.36,2.55
+April,2023,Morton,CAT Morton,Reach Truck,Reactive,23,2.596521,14.37913,5.263913,59.719983,330.71999,121.069999
+April,2023,Morton,CAT Morton,Scissor,Reactive,3,23.61,26.276666,3.943333,70.83,78.829998,11.829999
+April,2023,Morton,CAT Morton,Sit Down IC,Damage,9,12.154444,20.21,7.284444,109.389996,181.89,65.559996
+April,2023,Morton,CAT Morton,Sweeper/Scrubber,Damage,1,2.32,6.32,2.38,2.32,6.32,2.38
+April,2023,Morton,CAT Morton,Personnel Carrier,Reactive,2,2.25,5.25,0.585,4.5,10.5,1.17
+April,2023,Morton,CAT Morton,Stand Up Counterbalance,Reactive,3,2.116666,7.283333,5.48,6.349998,21.849999,16.44
+April,2023,Morton,CAT Morton,Stock Chaser,Reactive,7,0.732857,24.847142,5.648571,5.129999,173.929994,39.539997
+April,2023,Morton,CAT Morton,Excavator,Reactive,4,12.76,13.885,3.53,51.04,55.54,14.12
+April,2023,Morton,CAT Morton,Tugger,Reactive,1,7,12.5,5.77,7,12.5,5.77
+March,2023,Morton,CAT Morton,Stand Up Counterbalance,Damage,1,0.25,4.25,21.03,0.25,4.25,21.03
+March,2023,Morton,CAT Morton,Sit Down Electric,Reactive,20,2.264,5.9205,4.657,45.28,118.41,93.14
+March,2023,Morton,CAT Morton,Scissor,Damage,1,4.13,8.13,2.25,4.13,8.13,2.25
+March,2023,Morton,CAT Morton,Reach Truck,Reactive,4,5.3875,6.82,7.4225,21.55,27.28,29.69
+March,2023,Morton,CAT Morton,Tow,Reactive,1,0,1.5,3.88,0,1.5,3.88
+March,2023,Morton,CAT Morton,Sit Down Electric,Damage,4,1.8825,3.275,1.9475,7.53,13.1,7.79
+March,2023,Morton,CAT Morton,Excavator,Reactive,1,0.22,1.22,20.07,0.22,1.22,20.07
+March,2023,Morton,CAT Morton,Personnel Carrier,Reactive,4,0,0.25,20.345,0,1,81.38
+March,2023,Morton,CAT Morton,Vertical Mast,Reactive,1,0.42,41.92,2.12,0.42,41.92,2.12
+March,2023,Morton,CAT Morton,Wheel Loader,Reactive,2,0,2.075,3.615,0,4.15,7.23
+March,2023,Morton,CAT Morton,Stand Up Counterbalance,Reactive,1,2.43,2.43,21.03,2.43,2.43,21.03
+March,2023,Morton,CAT Morton,Stock Chaser,Reactive,2,0,3,0.615,0,6,1.23
+March,2023,Morton,CAT Morton,Sit Down IC,Reactive,4,0.985,10.08,2.5425,3.94,40.32,10.17
+April,2023,East Peoria,CAT Morton,Wheel Loader,Reactive,2,0,2.075,3.615,0,4.15,7.23
+April,2023,Mossville,CAT Morton,Stand Up Counterbalance,Reactive,1,2.43,2.43,21.03,2.43,2.43,21.03
+March,2023,Mossville,CAT Morton,Stock Chaser,Reactive,2,0,3,0.615,0,6,1.23
+March,2023,East Peoria,CAT Morton,Sit Down IC,Reactive,4,0.985,10.08,2.5425,3.94,40.32,10.17
